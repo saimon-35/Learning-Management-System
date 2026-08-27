@@ -1,0 +1,152 @@
+.navbar {
+  width: 100%;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.navbar-container {
+  width: 100%;
+  max-width: 1200px;
+  height: 72px;
+  margin: 0 auto;
+  padding: 0 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo */
+
+.navbar-logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.5px;
+}
+
+.navbar-logo span {
+  color: #4f46e5;
+}
+
+/* Navigation Links */
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.navbar-link {
+  position: relative;
+  padding: 26px 0;
+
+  font-size: 15px;
+  font-weight: 500;
+  color: #4b5563;
+
+  transition: color 0.2s ease;
+}
+
+.navbar-link:hover {
+  color: #4f46e5;
+}
+
+.navbar-link-active {
+  color: #4f46e5;
+}
+
+.navbar-link-active::after {
+  content: "";
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  height: 2px;
+  background: #4f46e5;
+}
+
+/* Actions */
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-login {
+  padding: 10px 18px;
+
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+
+  border-radius: 6px;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.navbar-login:hover {
+  color: #4f46e5;
+  background: #f5f3ff;
+}
+
+.navbar-signup {
+  padding: 10px 20px;
+
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+
+  background: #4f46e5;
+  border-radius: 6px;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.navbar-signup:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+}
+
+/* Tablet */
+
+@media (max-width: 900px) {
+  .navbar-links {
+    gap: 20px;
+  }
+
+  .navbar-container {
+    padding: 0 20px;
+  }
+}
+
+/* Mobile */
+
+@media (max-width: 700px) {
+  .navbar-container {
+    height: 64px;
+  }
+
+  .navbar-links {
+    display: none;
+  }
+
+  .navbar-login {
+    padding: 8px 12px;
+  }
+
+  .navbar-signup {
+    padding: 8px 14px;
+  }
+
+  .navbar-logo {
+    font-size: 21px;
+  }
+}
