@@ -3,18 +3,25 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
 import useAuth from "@/hooks/useAuth";
+
 import "./loginform.css";
 
 export default function LoginForm() {
   const router = useRouter();
+
   const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
-  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] =
+    useState(false);
+
+  const [loading, setLoading] =
+    useState(false);
+
   const [error, setError] = useState("");
 
   const handleSubmit = async (
@@ -26,13 +33,31 @@ export default function LoginForm() {
     setLoading(true);
 
     try {
-      await login({
+      const user = await login({
         identifier: email,
         password,
       });
 
-      // Login successful → go to My Courses
-      router.push("/my-courses");
+      const role = user.role?.name;
+
+      if (role === "Instructor") {
+        router.push("/instructor");
+        return;
+      }
+
+      if (role === "Student") {
+        router.push("/my-courses");
+        return;
+      }
+
+      if (role === "Content Manager") {
+        router.push("/content-manager");
+        return;
+      }
+
+      setError(
+        "Your account does not have a supported role."
+      );
     } catch (error) {
       setError(
         error instanceof Error
@@ -51,7 +76,8 @@ export default function LoginForm() {
           <h1>Welcome Back</h1>
 
           <p>
-            Sign in to continue learning and track your progress.
+            Sign in to continue learning and track your
+            progress.
           </p>
         </div>
 
@@ -93,7 +119,11 @@ export default function LoginForm() {
             <div className="login-form-password">
               <input
                 id="login-password"
-                type={showPassword ? "text" : "password"}
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
                 placeholder="Enter your password"
                 value={password}
                 onChange={(event) =>
@@ -138,7 +168,9 @@ export default function LoginForm() {
             className="login-form-submit"
             disabled={loading}
           >
-            {loading ? "Signing In..." : "Sign In"}
+            {loading
+              ? "Signing In..."
+              : "Sign In"}
           </button>
         </form>
 

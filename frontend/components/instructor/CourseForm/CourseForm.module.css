@@ -1,0 +1,143 @@
+.form {
+  width: 100%;
+  max-width: 800px;
+  padding: 32px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-sizing: border-box;
+}
+
+.header {
+  margin-bottom: 28px;
+}
+
+.title {
+  margin: 0 0 6px;
+  color: #111827;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin: 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.error {
+  margin-bottom: 20px;
+  padding: 12px 14px;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #dc2626;
+  font-size: 14px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex: 1;
+}
+
+.formGroup label {
+  color: #374151;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.formGroup input,
+.formGroup textarea {
+  width: 100%;
+  padding: 12px 14px;
+  box-sizing: border-box;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #111827;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.formGroup textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+.formGroup input::placeholder,
+.formGroup textarea::placeholder {
+  color: #9ca3af;
+}
+
+.helpText {
+  color: #9ca3af;
+  font-size: 12px;
+}
+
+.row {
+  display: flex;
+  gap: 20px;
+}
+
+.submitButton {
+  width: 100%;
+  margin-top: 8px;
+  padding: 13px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #4f46e5;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
+}
+
+.submitButton:hover {
+  background-color: #4338ca;
+}
+
+.submitButton:active {
+  transform: scale(0.99);
+}
+
+@media (max-width: 768px) {
+  .form {
+    padding: 24px;
+  }
+
+  .row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .title {
+    font-size: 21px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form {
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  .title {
+    font-size: 19px;
+  }
+}

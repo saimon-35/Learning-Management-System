@@ -21,53 +21,103 @@ import {
   register as registerRequest,
 } from "@/services/auth.service";
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-export function AuthProvider({ children }: AuthProviderProps) {
+export function AuthProvider({
+  children,
+}: AuthProviderProps) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [token, setToken] = useState<string | null>(null);
 
-  const isAuthenticated = user !== null && token !== null;
+  const [isLoading, setIsLoading] = useState(true);
+
+  const isAuthenticated =
+    user !== null && token !== null;
+
+  const isInstructor =
+    user?.role?.name === "Instructor";
+
+  const isStudent =
+    user?.role?.name === "Student";
+
+  const isContentManager =
+    user?.role?.name === "Content Manager";
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("authToken");
+    const initializeAuth = async () => {
+      const storedToken =
+        localStorage.getItem("authToken");
 
-    if (!storedToken) {
-      return;
-    }
+      if (!storedToken) {
+        setIsLoading(false);
+        return;
+      }
 
-    getCurrentUser(storedToken)
-      .then((currentUser) => {
+      try {
+        const currentUser =
+          await getCurrentUser(storedToken);
+
         setToken(storedToken);
         setUser(currentUser);
-      })
-      .catch(() => {
+      } catch {
         localStorage.removeItem("authToken");
+
         setToken(null);
         setUser(null);
-      });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeAuth();
   }, []);
 
-  const login = async (credentials: LoginRequest) => {
-    const response = await loginRequest(credentials);
+  const login = async (
+    credentials: LoginRequest
+  ): Promise<AuthUser> => {
+    const response =
+      await loginRequest(credentials);
 
-    localStorage.setItem("authToken", response.jwt);
+    localStorage.setItem(
+      "authToken",
+      response.jwt
+    );
 
     setToken(response.jwt);
-    setUser(response.user);
+
+    const currentUser =
+      await getCurrentUser(response.jwt);
+
+    setUser(currentUser);
+
+    return currentUser;
   };
 
-  const register = async (data: RegisterRequest) => {
-    const response = await registerRequest(data);
+  const register = async (
+    data: RegisterRequest
+  ): Promise<AuthUser> => {
+    const response =
+      await registerRequest(data);
 
-    localStorage.setItem("authToken", response.jwt);
+    localStorage.setItem(
+      "authToken",
+      response.jwt
+    );
 
     setToken(response.jwt);
-    setUser(response.user);
+
+    const currentUser =
+      await getCurrentUser(response.jwt);
+
+    setUser(currentUser);
+
+    return currentUser;
   };
 
   const logout = () => {
@@ -81,7 +131,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     <AuthContext.Provider
       value={{
         user,
+        token,
+
         isAuthenticated,
+        isLoading,
+
+        isInstructor,
+        isStudent,
+        isContentManager,
+
         login,
         register,
         logout,
