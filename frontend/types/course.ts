@@ -1,3 +1,9 @@
+export interface CourseCategory {
+  id: number;
+  documentId?: string;
+  title: string;
+}
+
 export interface Course {
   id: number;
 
@@ -17,7 +23,7 @@ export interface Course {
 
   price: number;
 
-  category?: string;
+  category?: CourseCategory | null;
 
   course_status: "draft" | "pending_review" | "published";
 
@@ -46,8 +52,6 @@ export interface CreateCourseRequest {
 
 export interface CreateCourseResponse {
   data: Course;
-
-  meta?: Record<string, unknown>;
 }
 
 export interface GetCoursesResponse {

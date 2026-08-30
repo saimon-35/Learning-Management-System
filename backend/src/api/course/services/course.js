@@ -12,6 +12,34 @@ module.exports = createCoreService(
   ({ strapi }) => ({
 
     // =========================================================
+// GET PUBLISHED COURSES
+// Public courses for students
+// =========================================================
+
+async getPublishedCourses() {
+
+  const courses = await strapi
+    .documents('api::course.course')
+    .findMany({
+      filters: {
+        course_status: {
+          $eq: 'published',
+        },
+      },
+
+      populate: {
+        instructor: true,
+        category: true,
+        thumbnail: true,
+      },
+
+      sort: 'createdAt:desc',
+    });
+
+  return courses;
+},
+
+    // =========================================================
     // CREATE COURSE
     // Instructor only
     // New course → draft

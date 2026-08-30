@@ -41,3 +41,13 @@ export async function submitCourseForReview(
     }
   );
 }
+// =========================================================
+// GET PUBLISHED COURSES
+// Public endpoint
+// =========================================================
+
+export async function getPublishedCourses(): Promise<GetCoursesResponse> {
+  return apiRequest<GetCoursesResponse>("/public/courses", {
+    method: "GET",
+  });
+}

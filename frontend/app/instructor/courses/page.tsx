@@ -36,6 +36,10 @@ export default function InstructorCoursesPage() {
 
   const [error, setError] = useState("");
 
+  // =========================================================
+  // LOAD COURSES
+  // =========================================================
+
   useEffect(() => {
     if (isLoading) {
       return;
@@ -57,12 +61,15 @@ export default function InstructorCoursesPage() {
       return;
     }
 
+    const authToken = token;
+
     async function fetchCourses() {
       try {
         setIsCoursesLoading(true);
         setError("");
 
-        const response = await getCourses(token);
+        const response =
+          await getCourses(authToken);
 
         setCourses(response.data);
       } catch (error) {
@@ -112,7 +119,6 @@ export default function InstructorCoursesPage() {
           token
         );
 
-      // Update the course status in local state
       setCourses((currentCourses) =>
         currentCourses.map((course) =>
           course.documentId === documentId
@@ -136,6 +142,10 @@ export default function InstructorCoursesPage() {
     }
   };
 
+  // =========================================================
+  // LOADING AUTH
+  // =========================================================
+
   if (isLoading) {
     return (
       <div className="instructor-page">
@@ -154,11 +164,18 @@ export default function InstructorCoursesPage() {
     return null;
   }
 
+  // =========================================================
+  // PAGE
+  // =========================================================
+
   return (
     <div className="instructor-page">
       <InstructorSidebar />
 
       <main className="instructor-main">
+
+        {/* Header */}
+
         <div className="courses-header">
           <div>
             <h1>My Courses</h1>
@@ -176,7 +193,10 @@ export default function InstructorCoursesPage() {
           </Link>
         </div>
 
+        {/* Courses */}
+
         <section className="courses-section">
+
           <div className="courses-section-header">
             <div>
               <h2>All Courses</h2>
@@ -194,18 +214,28 @@ export default function InstructorCoursesPage() {
             </span>
           </div>
 
+          {/* Error */}
+
           {error && (
             <div className="courses-error">
               {error}
             </div>
           )}
 
+          {/* Loading */}
+
           {isCoursesLoading ? (
+
             <div className="courses-loading">
               <p>Loading courses...</p>
             </div>
+
           ) : courses.length === 0 ? (
+
+            /* Empty */
+
             <div className="courses-empty-state">
+
               <div className="courses-empty-icon">
                 📚
               </div>
@@ -223,16 +253,26 @@ export default function InstructorCoursesPage() {
               >
                 Create Your First Course
               </Link>
+
             </div>
+
           ) : (
+
+            /* Course Grid */
+
             <div className="courses-grid">
+
               {courses.map((course) => (
+
                 <article
                   key={course.documentId}
                   className="course-card"
                 >
+
                   <div className="course-card-content">
+
                     <div className="course-card-top">
+
                       <span className="course-label">
                         Course
                       </span>
@@ -240,16 +280,21 @@ export default function InstructorCoursesPage() {
                       <span className="course-price">
                         ৳{course.price}
                       </span>
+
                     </div>
 
-                    <h3>{course.title}</h3>
+                    <h3>
+                      {course.title}
+                    </h3>
 
                     <p className="course-description">
                       {course.description}
                     </p>
 
                     {/* Course Status */}
+
                     <div className="course-status">
+
                       <span>
                         Status:
                       </span>
@@ -257,14 +302,17 @@ export default function InstructorCoursesPage() {
                       <strong>
                         {course.course_status}
                       </strong>
+
                     </div>
 
                     <div className="course-card-footer">
+
                       <span className="course-slug">
                         /{course.slug}
                       </span>
 
                       <div className="course-actions">
+
                         <Link
                           href={`/instructor/courses/${course.documentId}`}
                           className="manage-course-button"
@@ -274,6 +322,7 @@ export default function InstructorCoursesPage() {
 
                         {course.course_status ===
                           "draft" && (
+
                           <button
                             type="button"
                             className="submit-review-button"
@@ -292,29 +341,43 @@ export default function InstructorCoursesPage() {
                               ? "Submitting..."
                               : "Submit for Review"}
                           </button>
+
                         )}
 
                         {course.course_status ===
                           "pending_review" && (
+
                           <span className="pending-review">
                             Pending Review
                           </span>
+
                         )}
 
                         {course.course_status ===
                           "published" && (
+
                           <span className="published-status">
                             Published
                           </span>
+
                         )}
+
                       </div>
+
                     </div>
+
                   </div>
+
                 </article>
+
               ))}
+
             </div>
+
           )}
+
         </section>
+
       </main>
     </div>
   );

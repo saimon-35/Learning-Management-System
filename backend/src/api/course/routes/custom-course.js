@@ -4,10 +4,21 @@ module.exports = {
   routes: [
 
     // =========================================================
+    // PUBLIC
+    // Get published courses
+    // =========================================================
+    {
+      method: 'GET',
+      path: '/public/courses',
+      handler: 'course.getPublishedCourses',
+      config: {},
+    },
+
+    // =========================================================
     // INSTRUCTOR
     // Submit course for review
+    // draft → pending_review
     // =========================================================
-
     {
       method: 'PUT',
       path: '/courses/:documentId/submit-review',
@@ -17,39 +28,15 @@ module.exports = {
 
     // =========================================================
     // ADMIN
-    // Get all courses
-    // =========================================================
-
-    {
-      method: 'GET',
-      path: '/admin/courses',
-      handler: 'course.getAdminCourses',
-      config: {},
-    },
-
-    // =========================================================
-    // ADMIN
-    // Get single course
-    // =========================================================
-
-    {
-      method: 'GET',
-      path: '/admin/courses/:documentId',
-      handler: 'course.getAdminCourse',
-      config: {},
-    },
-
-    // =========================================================
-    // ADMIN
     // Approve course
     // pending_review → published
     // =========================================================
-
     {
       method: 'PUT',
-      path: '/admin/courses/:documentId/approve',
+      path: '/courses/:documentId/approve',
       handler: 'course.approveCourse',
       config: {},
     },
+
   ],
 };

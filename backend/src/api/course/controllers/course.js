@@ -13,6 +13,22 @@ module.exports = createCoreController(
   ({ strapi }) => ({
 
     // =========================================================
+    // GET PUBLISHED COURSES
+    // =========================================================
+
+    async getPublishedCourses(ctx) {
+
+      const courses =
+        await strapi
+          .service('api::course.course')
+          .getPublishedCourses();
+
+      return {
+        data: courses,
+      };
+    },
+
+    // =========================================================
     // CREATE COURSE
     // Instructor only
     // =========================================================

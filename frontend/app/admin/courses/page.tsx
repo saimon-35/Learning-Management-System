@@ -60,13 +60,15 @@ export default function AdminCoursesPage() {
       return;
     }
 
+    const authToken = token;
+
     async function fetchCourses() {
       try {
         setIsCoursesLoading(true);
         setError("");
 
         const response =
-          await getAdminCourses(token);
+          await getAdminCourses(authToken);
 
         setCourses(response.data);
       } catch (error) {
@@ -206,6 +208,7 @@ export default function AdminCoursesPage() {
             <p>Loading courses...</p>
           </div>
         ) : courses.length === 0 ? (
+
           /* Empty */
 
           <div className="admin-courses-empty">
@@ -220,7 +223,9 @@ export default function AdminCoursesPage() {
               available for review.
             </p>
           </div>
+
         ) : (
+
           /* Course list */
 
           <section className="admin-courses-section">
@@ -342,6 +347,7 @@ export default function AdminCoursesPage() {
             </div>
 
           </section>
+
         )}
 
       </main>
