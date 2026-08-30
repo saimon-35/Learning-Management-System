@@ -9,6 +9,12 @@ export interface Course {
   slug: string;
   price: number;
   category?: string;
+  instructor?: {
+    id: number;
+    documentId?: string;
+    username: string;
+    email: string;
+  };
 }
 
 export interface CreateCourseRequest {

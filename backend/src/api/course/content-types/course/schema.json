@@ -42,11 +42,11 @@
       "target": "api::category.category",
       "inversedBy": "courses"
     },
-    "users_permissions_user": {
+    "instructor": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
-      "inversedBy": "instructor"
+      "inversedBy": "courses"
     }
   }
 }
