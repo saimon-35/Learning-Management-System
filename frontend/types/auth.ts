@@ -47,6 +47,7 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
 
+  isAdmin: boolean;
   isInstructor: boolean;
   isStudent: boolean;
   isContentManager: boolean;

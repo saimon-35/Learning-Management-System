@@ -1,0 +1,188 @@
+.admin-courses-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.admin-courses-header h1 {
+  margin: 0 0 8px;
+  font-size: 32px;
+}
+
+.admin-courses-header p {
+  margin: 0;
+  color: #666;
+}
+
+.admin-course-count {
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: #f4f4f4;
+  font-weight: 600;
+}
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.admin-courses-error {
+  margin-bottom: 24px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: #fff1f1;
+  color: #c62828;
+}
+
+/* =========================================================
+   LOADING
+   ========================================================= */
+
+.admin-courses-loading {
+  padding: 60px 20px;
+  text-align: center;
+  color: #666;
+}
+
+/* =========================================================
+   EMPTY
+   ========================================================= */
+
+.admin-courses-empty {
+  padding: 80px 20px;
+  text-align: center;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.admin-courses-empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.admin-courses-empty h2 {
+  margin: 0 0 8px;
+}
+
+.admin-courses-empty p {
+  margin: 0;
+  color: #777;
+}
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.admin-courses-section {
+  width: 100%;
+}
+
+.admin-courses-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.admin-courses-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.admin-courses-table th,
+.admin-courses-table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.admin-courses-table th {
+  background: #fafafa;
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+}
+
+.admin-courses-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* =========================================================
+   COURSE
+   ========================================================= */
+
+.admin-course-title {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.admin-course-slug {
+  font-size: 13px;
+  color: #888;
+}
+
+/* =========================================================
+   STATUS
+   ========================================================= */
+
+.admin-course-status {
+  display: inline-flex;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.admin-course-status.pending_review {
+  background: #fff4d6;
+  color: #9a6700;
+}
+
+.admin-course-status.published {
+  background: #e7f7ed;
+  color: #187a42;
+}
+
+.admin-course-status.draft {
+  background: #eeeeee;
+  color: #555;
+}
+
+/* =========================================================
+   APPROVE BUTTON
+   ========================================================= */
+
+.approve-course-button {
+  border: none;
+  border-radius: 7px;
+  padding: 8px 14px;
+  background: #111;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.approve-course-button:hover {
+  opacity: 0.9;
+}
+
+.approve-course-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.course-published {
+  font-size: 13px;
+  font-weight: 600;
+  color: #187a42;
+}
+
+.course-draft {
+  font-size: 13px;
+  color: #777;
+}

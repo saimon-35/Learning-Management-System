@@ -47,6 +47,15 @@
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
       "inversedBy": "courses"
+    },
+    "course_status": {
+      "type": "enumeration",
+      "default": "draft",
+      "enum": [
+        "draft",
+        "pending_review",
+        "published"
+      ]
     }
   }
 }

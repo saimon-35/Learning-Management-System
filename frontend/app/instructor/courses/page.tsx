@@ -7,7 +7,10 @@ import { useRouter } from "next/navigation";
 import InstructorSidebar from "@/components/instructor/InstructorSidebar/InstructorSidebar";
 import useAuth from "@/hooks/useAuth";
 
-import { getCourses } from "@/services/course.service";
+import {
+  getCourses,
+  submitCourseForReview,
+} from "@/services/course.service";
 
 import "../instructor.css";
 import "./courses.css";
@@ -27,6 +30,10 @@ export default function InstructorCoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);
   const [isCoursesLoading, setIsCoursesLoading] =
     useState(true);
+
+  const [submittingCourseId, setSubmittingCourseId] =
+    useState<string | null>(null);
+
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -82,6 +89,52 @@ export default function InstructorCoursesPage() {
     token,
     router,
   ]);
+
+  // =========================================================
+  // SUBMIT COURSE FOR REVIEW
+  // =========================================================
+
+  const handleSubmitForReview = async (
+    documentId: string
+  ) => {
+    if (!token) {
+      setError("Authentication token is missing.");
+      return;
+    }
+
+    try {
+      setSubmittingCourseId(documentId);
+      setError("");
+
+      const response =
+        await submitCourseForReview(
+          documentId,
+          token
+        );
+
+      // Update the course status in local state
+      setCourses((currentCourses) =>
+        currentCourses.map((course) =>
+          course.documentId === documentId
+            ? response.data
+            : course
+        )
+      );
+    } catch (error) {
+      console.error(
+        "Failed to submit course for review:",
+        error
+      );
+
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Failed to submit course for review."
+      );
+    } finally {
+      setSubmittingCourseId(null);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -195,17 +248,66 @@ export default function InstructorCoursesPage() {
                       {course.description}
                     </p>
 
+                    {/* Course Status */}
+                    <div className="course-status">
+                      <span>
+                        Status:
+                      </span>
+
+                      <strong>
+                        {course.course_status}
+                      </strong>
+                    </div>
+
                     <div className="course-card-footer">
                       <span className="course-slug">
                         /{course.slug}
                       </span>
 
-                      <Link
-                        href={`/instructor/courses/${course.documentId}`}
-                        className="manage-course-button"
-                      >
-                        Manage
-                      </Link>
+                      <div className="course-actions">
+                        <Link
+                          href={`/instructor/courses/${course.documentId}`}
+                          className="manage-course-button"
+                        >
+                          Manage
+                        </Link>
+
+                        {course.course_status ===
+                          "draft" && (
+                          <button
+                            type="button"
+                            className="submit-review-button"
+                            onClick={() =>
+                              handleSubmitForReview(
+                                course.documentId
+                              )
+                            }
+                            disabled={
+                              submittingCourseId ===
+                              course.documentId
+                            }
+                          >
+                            {submittingCourseId ===
+                            course.documentId
+                              ? "Submitting..."
+                              : "Submit for Review"}
+                          </button>
+                        )}
+
+                        {course.course_status ===
+                          "pending_review" && (
+                          <span className="pending-review">
+                            Pending Review
+                          </span>
+                        )}
+
+                        {course.course_status ===
+                          "published" && (
+                          <span className="published-status">
+                            Published
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </article>

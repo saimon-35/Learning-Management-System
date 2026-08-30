@@ -48,6 +48,9 @@ export function AuthProvider({
 
   const isContentManager =
     user?.role?.name === "Content Manager";
+  
+  const isAdmin =
+    user?.role?.name === "Admin";
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -136,6 +139,7 @@ export function AuthProvider({
         isAuthenticated,
         isLoading,
 
+        isAdmin,
         isInstructor,
         isStudent,
         isContentManager,

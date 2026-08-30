@@ -4,6 +4,7 @@ import type {
   CreateCourseRequest,
   CreateCourseResponse,
   GetCoursesResponse,
+  SubmitCourseForReviewResponse,
 } from "@/types/course";
 
 export async function createCourse(
@@ -18,6 +19,7 @@ export async function createCourse(
     }),
   });
 }
+
 export async function getCourses(
   token: string
 ): Promise<GetCoursesResponse> {
@@ -25,4 +27,17 @@ export async function getCourses(
     method: "GET",
     token,
   });
+}
+
+export async function submitCourseForReview(
+  documentId: string,
+  token: string
+): Promise<SubmitCourseForReviewResponse> {
+  return apiRequest<SubmitCourseForReviewResponse>(
+    `/courses/${documentId}/submit-review`,
+    {
+      method: "PUT",
+      token,
+    }
+  );
 }

@@ -4,7 +4,9 @@
  * course controller
  */
 
-const { createCoreController } = require('@strapi/strapi').factories;
+const {
+  createCoreController
+} = require('@strapi/strapi').factories;
 
 module.exports = createCoreController(
   'api::course.course',
@@ -12,24 +14,31 @@ module.exports = createCoreController(
 
     // =========================================================
     // CREATE COURSE
+    // Instructor only
     // =========================================================
 
     async create(ctx) {
-      const user = ctx.state.user;
 
-      // Check authentication
+      const user =
+        ctx.state.user;
+
       if (!user) {
-        return ctx.unauthorized('You must be logged in.');
+        return ctx.unauthorized(
+          'You must be logged in.'
+        );
       }
 
-      // Check instructor role
-      if (user.role?.name !== 'Instructor') {
+      if (
+        user.role?.name !==
+        'Instructor'
+      ) {
         return ctx.forbidden(
           'Only instructors can create courses.'
         );
       }
 
-      const { data } = ctx.request.body;
+      const { data } =
+        ctx.request.body;
 
       if (!data) {
         return ctx.badRequest(
@@ -37,187 +46,143 @@ module.exports = createCoreController(
         );
       }
 
-      // Never allow frontend to set the instructor
-      delete data.instructor;
+      const course =
+        await strapi
+          .service('api::course.course')
+          .createCourse(
+            user,
+            data
+          );
 
-      // Create course
-      // The logged-in instructor becomes the owner
-      const course = await strapi
-        .documents('api::course.course')
-        .create({
-          data: {
-            ...data,
-            instructor: user.id,
-          },
-          populate: {
-            instructor: true,
-            category: true,
-            thumbnail: true,
-          },
-        });
-
-      return this.transformResponse(course);
+      return this.transformResponse(
+        course
+      );
     },
 
     // =========================================================
-    // GET ALL COURSES
-    // Only courses belonging to logged-in instructor
+    // GET ALL INSTRUCTOR COURSES
     // =========================================================
 
     async find(ctx) {
-      const user = ctx.state.user;
 
-      // Check authentication
+      const user =
+        ctx.state.user;
+
       if (!user) {
-        return ctx.unauthorized('You must be logged in.');
+        return ctx.unauthorized(
+          'You must be logged in.'
+        );
       }
 
-      // Check instructor role
-      if (user.role?.name !== 'Instructor') {
+      if (
+        user.role?.name !==
+        'Instructor'
+      ) {
         return ctx.forbidden(
           'Only instructors can access courses.'
         );
       }
 
-      // Pagination
-      const page = Number(
-        ctx.query.pagination?.page || 1
-      );
+      const result =
+        await strapi
+          .service('api::course.course')
+          .getInstructorCourses(
+            user,
+            ctx.query
+          );
 
-      const pageSize = Number(
-        ctx.query.pagination?.pageSize || 25
-      );
-
-      const start = (page - 1) * pageSize;
-
-      // Ownership filter
-      const filters = {
-        instructor: {
-          id: {
-            $eq: user.id,
-          },
-        },
-      };
-
-      // Get courses
-      const courses = await strapi
-        .documents('api::course.course')
-        .findMany({
-          filters,
-
-          populate: {
-            instructor: true,
-            category: true,
-            thumbnail: true,
-          },
-
-          sort: 'createdAt:desc',
-
-          start,
-          limit: pageSize,
-        });
-
-      // Get total number of courses
-      const total = await strapi
-        .documents('api::course.course')
-        .count({
-          filters,
-        });
-
-      return {
-        data: courses,
-
-        meta: {
-          pagination: {
-            page,
-            pageSize,
-            pageCount: Math.ceil(
-              total / pageSize
-            ),
-            total,
-          },
-        },
-      };
+      return result;
     },
 
     // =========================================================
-    // GET SINGLE COURSE
-    // Only owner can access
+    // GET SINGLE INSTRUCTOR COURSE
     // =========================================================
 
     async findOne(ctx) {
-      const user = ctx.state.user;
 
-      // Check authentication
+      const user =
+        ctx.state.user;
+
       if (!user) {
-        return ctx.unauthorized('You must be logged in.');
+        return ctx.unauthorized(
+          'You must be logged in.'
+        );
       }
 
-      // Check instructor role
-      if (user.role?.name !== 'Instructor') {
+      if (
+        user.role?.name !==
+        'Instructor'
+      ) {
         return ctx.forbidden(
           'Only instructors can access courses.'
         );
       }
 
-      const { documentId } = ctx.params;
+      const { documentId } =
+        ctx.params;
 
-      // Find course
-      const course = await strapi
-        .documents('api::course.course')
-        .findOne({
-          documentId,
+      try {
 
-          populate: {
-            instructor: true,
-            category: true,
-            thumbnail: true,
-          },
-        });
+        const course =
+          await strapi
+            .service('api::course.course')
+            .getInstructorCourse(
+              documentId,
+              user
+            );
 
-      // Course doesn't exist
-      if (!course) {
-        return ctx.notFound(
-          'Course not found.'
+        return this.transformResponse(
+          course
         );
-      }
 
-      // Check ownership
-      if (
-        !course.instructor ||
-        course.instructor.id !== user.id
-      ) {
-        return ctx.forbidden(
-          'You can only access your own courses.'
-        );
-      }
+      } catch (error) {
 
-      return this.transformResponse(course);
+        if (error.status === 404) {
+          return ctx.notFound(
+            error.message
+          );
+        }
+
+        if (error.status === 403) {
+          return ctx.forbidden(
+            error.message
+          );
+        }
+
+        throw error;
+      }
     },
 
     // =========================================================
     // UPDATE COURSE
-    // Only owner can update
+    // Instructor only
     // =========================================================
 
     async update(ctx) {
-      const user = ctx.state.user;
 
-      // Check authentication
+      const user =
+        ctx.state.user;
+
       if (!user) {
-        return ctx.unauthorized('You must be logged in.');
+        return ctx.unauthorized(
+          'You must be logged in.'
+        );
       }
 
-      // Check instructor role
-      if (user.role?.name !== 'Instructor') {
+      if (
+        user.role?.name !==
+        'Instructor'
+      ) {
         return ctx.forbidden(
           'Only instructors can update courses.'
         );
       }
 
-      const { documentId } = ctx.params;
+      const { documentId } =
+        ctx.params;
 
-      const { data } = ctx.request.body;
+      const { data } =
+        ctx.request.body;
 
       if (!data) {
         return ctx.badRequest(
@@ -225,118 +190,312 @@ module.exports = createCoreController(
         );
       }
 
-      // Find existing course
-      const course = await strapi
-        .documents('api::course.course')
-        .findOne({
-          documentId,
+      try {
 
-          populate: {
-            instructor: true,
-          },
-        });
+        const updatedCourse =
+          await strapi
+            .service('api::course.course')
+            .updateCourse(
+              documentId,
+              user,
+              data
+            );
 
-      // Course doesn't exist
-      if (!course) {
-        return ctx.notFound(
-          'Course not found.'
+        return this.transformResponse(
+          updatedCourse
+        );
+
+      } catch (error) {
+
+        if (error.status === 404) {
+          return ctx.notFound(
+            error.message
+          );
+        }
+
+        if (error.status === 403) {
+          return ctx.forbidden(
+            error.message
+          );
+        }
+
+        throw error;
+      }
+    },
+
+    // =========================================================
+    // SUBMIT COURSE FOR REVIEW
+    // Instructor only
+    // draft → pending_review
+    // =========================================================
+
+    async submitForReview(ctx) {
+
+      const user =
+        ctx.state.user;
+
+      if (!user) {
+        return ctx.unauthorized(
+          'You must be logged in.'
         );
       }
 
-      // Check ownership
       if (
-        !course.instructor ||
-        course.instructor.id !== user.id
+        user.role?.name !==
+        'Instructor'
       ) {
         return ctx.forbidden(
-          'You can only update your own courses.'
+          'Only instructors can submit courses for review.'
         );
       }
 
-      // Never allow instructor ownership
-      // to be changed from frontend
-      delete data.instructor;
+      const { documentId } =
+        ctx.params;
 
-      // Update course
-      const updatedCourse = await strapi
-        .documents('api::course.course')
-        .update({
-          documentId,
+      try {
 
-          data,
+        const updatedCourse =
+          await strapi
+            .service('api::course.course')
+            .submitForReview(
+              documentId,
+              user
+            );
 
-          populate: {
-            instructor: true,
-            category: true,
-            thumbnail: true,
-          },
-        });
+        return this.transformResponse(
+          updatedCourse
+        );
 
-      return this.transformResponse(
-        updatedCourse
-      );
+      } catch (error) {
+
+        if (error.status === 404) {
+          return ctx.notFound(
+            error.message
+          );
+        }
+
+        if (error.status === 403) {
+          return ctx.forbidden(
+            error.message
+          );
+        }
+
+        if (error.status === 400) {
+          return ctx.badRequest(
+            error.message
+          );
+        }
+
+        throw error;
+      }
+    },
+
+    // =========================================================
+    // ADMIN
+    // GET ALL COURSES
+    // =========================================================
+
+    async getAdminCourses(ctx) {
+
+      const user =
+        ctx.state.user;
+
+      if (!user) {
+        return ctx.unauthorized(
+          'You must be logged in.'
+        );
+      }
+
+      if (
+        user.role?.name !==
+        'Admin'
+      ) {
+        return ctx.forbidden(
+          'Only admins can access courses.'
+        );
+      }
+
+      const result =
+        await strapi
+          .service('api::course.course')
+          .getAdminCourses(
+            ctx.query
+          );
+
+      return result;
+    },
+
+    // =========================================================
+    // ADMIN
+    // GET SINGLE COURSE
+    // =========================================================
+
+    async getAdminCourse(ctx) {
+
+      const user =
+        ctx.state.user;
+
+      if (!user) {
+        return ctx.unauthorized(
+          'You must be logged in.'
+        );
+      }
+
+      if (
+        user.role?.name !==
+        'Admin'
+      ) {
+        return ctx.forbidden(
+          'Only admins can access courses.'
+        );
+      }
+
+      const { documentId } =
+        ctx.params;
+
+      try {
+
+        const course =
+          await strapi
+            .service('api::course.course')
+            .getAdminCourse(
+              documentId
+            );
+
+        return this.transformResponse(
+          course
+        );
+
+      } catch (error) {
+
+        if (error.status === 404) {
+          return ctx.notFound(
+            error.message
+          );
+        }
+
+        throw error;
+      }
+    },
+
+    // =========================================================
+    // ADMIN
+    // APPROVE COURSE
+    // pending_review → published
+    // =========================================================
+
+    async approveCourse(ctx) {
+
+      const user =
+        ctx.state.user;
+
+      if (!user) {
+        return ctx.unauthorized(
+          'You must be logged in.'
+        );
+      }
+
+      if (
+        user.role?.name !==
+        'Admin'
+      ) {
+        return ctx.forbidden(
+          'Only admins can approve courses.'
+        );
+      }
+
+      const { documentId } =
+        ctx.params;
+
+      try {
+
+        const updatedCourse =
+          await strapi
+            .service('api::course.course')
+            .approveCourse(
+              documentId
+            );
+
+        return this.transformResponse(
+          updatedCourse
+        );
+
+      } catch (error) {
+
+        if (error.status === 404) {
+          return ctx.notFound(
+            error.message
+          );
+        }
+
+        if (error.status === 400) {
+          return ctx.badRequest(
+            error.message
+          );
+        }
+
+        throw error;
+      }
     },
 
     // =========================================================
     // DELETE COURSE
-    // Only owner can delete
+    // Instructor only
     // =========================================================
 
     async delete(ctx) {
-      const user = ctx.state.user;
 
-      // Check authentication
+      const user =
+        ctx.state.user;
+
       if (!user) {
-        return ctx.unauthorized('You must be logged in.');
+        return ctx.unauthorized(
+          'You must be logged in.'
+        );
       }
 
-      // Check instructor role
-      if (user.role?.name !== 'Instructor') {
+      if (
+        user.role?.name !==
+        'Instructor'
+      ) {
         return ctx.forbidden(
           'Only instructors can delete courses.'
         );
       }
 
-      const { documentId } = ctx.params;
+      const { documentId } =
+        ctx.params;
 
-      // Find existing course
-      const course = await strapi
-        .documents('api::course.course')
-        .findOne({
-          documentId,
+      try {
 
-          populate: {
-            instructor: true,
-          },
-        });
+        const deletedCourse =
+          await strapi
+            .service('api::course.course')
+            .deleteCourse(
+              documentId,
+              user
+            );
 
-      // Course doesn't exist
-      if (!course) {
-        return ctx.notFound(
-          'Course not found.'
+        return this.transformResponse(
+          deletedCourse
         );
+
+      } catch (error) {
+
+        if (error.status === 404) {
+          return ctx.notFound(
+            error.message
+          );
+        }
+
+        if (error.status === 403) {
+          return ctx.forbidden(
+            error.message
+          );
+        }
+
+        throw error;
       }
-
-      // Check ownership
-      if (
-        !course.instructor ||
-        course.instructor.id !== user.id
-      ) {
-        return ctx.forbidden(
-          'You can only delete your own courses.'
-        );
-      }
-
-      // Delete course
-      const deletedCourse = await strapi
-        .documents('api::course.course')
-        .delete({
-          documentId,
-        });
-
-      return this.transformResponse(
-        deletedCourse
-      );
     },
 
   })

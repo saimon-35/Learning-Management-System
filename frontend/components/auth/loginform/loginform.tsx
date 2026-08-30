@@ -40,6 +40,11 @@ export default function LoginForm() {
 
       const role = user.role?.name;
 
+      if(role === "Admin") {
+        router.push("/admin");
+        return;
+      }
+      
       if (role === "Instructor") {
         router.push("/instructor");
         return;
@@ -54,7 +59,6 @@ export default function LoginForm() {
         router.push("/content-manager");
         return;
       }
-
       setError(
         "Your account does not have a supported role."
       );
