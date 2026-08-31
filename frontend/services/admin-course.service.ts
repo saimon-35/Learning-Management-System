@@ -30,7 +30,7 @@ export async function approveCourse(
   token: string
 ): Promise<SubmitCourseForReviewResponse> {
   return apiRequest<SubmitCourseForReviewResponse>(
-    `/admin/courses/${documentId}/approve`,
+    `/courses/${documentId}/approve`,
     {
       method: "PUT",
       token,

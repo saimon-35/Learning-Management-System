@@ -18,11 +18,6 @@ module.exports = createCoreController(
 
     async findAllCourses(ctx) {
       const user = ctx.state.user;
-      console.log('Admin user:', user);
-      // -------------------------------------------------------
-      // Check authentication
-      // -------------------------------------------------------
-
       if (!user) {
         return ctx.unauthorized(
           'You must be logged in.'
